@@ -30,7 +30,12 @@ import (
 	"html/template"
 )
 
-func formHandler(w http.ResponseWriter, r *http.Request){}
+func formHandler(w http.ResponseWriter, r *http.Request) string {
+	if r.method != http.MethodGet {
+		http.Error(w, "405 method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+}
 
 func submitHandler(w http.ResponseWriter, r *http.Request){}
 
