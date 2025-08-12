@@ -36,3 +36,9 @@ type Block struct {
 	Hash string  / hash of current block 
 	Nonce int // for proof of work - not sure if this will be used
 }
+
+func CalculateHash(block Block) string {
+	/* calculate SHA256 hash of the block and convert it to hexadecimal string */
+	hash := sha256.Sum256(block)
+	hashString := hex.EncodeToString(hash[:])
+}
