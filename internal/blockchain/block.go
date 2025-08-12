@@ -20,3 +20,19 @@ import (
 	"strconv"
 	"time"
 )
+/*
+index = block's position
+timestamp = when block was created
+data = certification records
+prevhash = hash of the previous block
+hash = hash of the current block
+nonce = proof of work - idk if will be used 
+*/
+type Block struct {
+	Index int 
+	Timestamp string 
+	Data string
+	PrevHash string 
+	Hash string 
+	Nonce int
+}
