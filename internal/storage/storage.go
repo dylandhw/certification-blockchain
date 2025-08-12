@@ -17,21 +17,22 @@ import (
 	"encoding/json"
 	"os"
 	"errors"
+	"fmt"
 )
 
 func SaveBlockChain(filename string, bc *Blockchain) error {
 	// marshal bc to json
-	JSON_bc, err := json.Marshal(bc)
+	JSONbc, err := json.Marshal(bc)
 	if err != nil {return err}
 
 	// write json bytes to the file
-	err = os.WriteFile(filename, JSON_bc, 0644) 
+	err = os.WriteFile(filename, JSONbc, 0644) 
 	if err != nil {return err}
 
 	return nil // success 
 }
 
-func LoadBlockchain(filename string, bc *Blockchain) (bc *Blockchain, error) {
+func LoadBlockchain(filename string) (bc *Blockchain, error) {
 	bc_file, err := os.ReadFile(filename)
 	
 	// logic for file not found (blockchain doesn't exist)
@@ -41,5 +42,10 @@ func LoadBlockchain(filename string, bc *Blockchain) (bc *Blockchain, error) {
 	if err != nil {
 		NewBC := NewBlockchain()
 		return NewBC
-	}
+	} else {
+		err := json.Unmarshal(filename, &bc_file)
+		return bc
+	} 
+	fmt.Printf(">> IN storage.go << : error reading or parsing data")
+	return err
 }
