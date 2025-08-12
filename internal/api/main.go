@@ -25,9 +25,18 @@ package main
 
 import (
 	"errors"
+	"log"
+	"net/http"
+	"html/template"
 )
 
+func formHandler(w http.ResponseWriter, r *http.Request){}
+
+func submitHandler(w http.ResponseWriter, r *http.Request){}
+
+
 func main(){
+	// load our blockchain
 	bc, err := LoadBlockchain("blockchain.json")
 	if err != nil {panic(err)}
 }
