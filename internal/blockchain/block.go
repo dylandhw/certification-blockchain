@@ -10,3 +10,13 @@
 	isBlockValid() -> returns a boolean if block is valid in sequence and hash  
 					  sends data to blockchain.go for chain validation		
 */
+
+package main 
+
+import (
+	"crypto/sha256"
+	"encoding/hex"
+	"fmt"
+	"strconv"
+	"time"
+)
