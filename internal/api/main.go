@@ -11,3 +11,15 @@ handleGetCertifications() -> returns all certifications for a given userID
 sends data to:
 	internal/blockchain: to add approved certifications
 */
+
+package main 
+
+import (
+	"errors"
+)
+
+func main(){
+	bc, err := LoadBlockchain("blockchain.json")
+	if err != nil {panic(err)}
+
+}
