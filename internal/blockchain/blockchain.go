@@ -42,11 +42,11 @@ func CreateGenesisBlock() Block {
 	return GenesisBlock
 }
 
-func NewBlockchain() (*Blockchain, error) {
-	var Blockchain Blockchain
-	BlockchainPtr := &Blockchain
+func NewBlockchain() (*Blockchain) {
+	var bc Blockchain
 
-	Genesis := CreateGenesisBlock()
-
-	return BlockchainPtr
+	GenesisBlock := CreateGenesisBlock()
+	bc.Blocks = append(bc.Blocks, GenesisBlock)
+	
+	return &bc
 }
