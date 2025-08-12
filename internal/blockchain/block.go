@@ -33,7 +33,7 @@ type Block struct {
 	Timestamp time.Time // when block was created
 	Data Certificate // certification records
 	PrevHash string // hash of previous block
-	Hash string  // hash of current block 
+	Hash string `json:"-"` // hash of current block 
 }
 
 /* serialize the block */
