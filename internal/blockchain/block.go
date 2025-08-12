@@ -21,10 +21,17 @@ import (
 	"time"
 )
 
+type Certificate struct {
+	MemberID string
+	Name string  
+	EventName string  
+	DateIssued time.Time
+}
+
 type Block struct {
 	Index int // block's position
-	Timestamp string // when block was created
-	Data string // certification records
+	Timestamp time.Time // when block was created
+	Data Certificate // certification records
 	PrevHash string // hash of previous block
 	Hash string  / hash of current block 
 	Nonce int // for proof of work - not sure if this will be used
