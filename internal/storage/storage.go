@@ -32,4 +32,19 @@ func SaveBlockChain(filename string, bc *Blockchain) error {
 	return nil // success 
 }
 
-func LoadBlockchain(filename string) (bc *Blockchain, error) {}
+func LoadBlockChain(filename string) (*Blockchain, error) {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return NewBlockchain(), nil // start fresh
+		}
+		return nil, err // some other read error
+	}
+
+	var bc Blockchain
+	if err := json.Unmarshal(data, &bc); err != nil {
+		return nil, err
+	}
+	fmt.Printf(">>> /storage.go : error reading or parsing json data") // internal debugging
+	return &bc, nil
+}
