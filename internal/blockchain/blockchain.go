@@ -10,7 +10,7 @@ GenesisBlock() -> function to fill out a genesis block
 NewBlockchain() -> creates an empty blockchain with a genesis block: returns a blockchain pointer
 GetLatestBlock() -> returns the latest block in the blockchain
 AddCertification() -> appends a new block containing certificate data: returns the newly added block  
-IsValid() -> checks the chain integrity: returns true / false
+IsValidChain() -> checks the chain integrity: returns true / false
 */
 
 /*
@@ -57,7 +57,7 @@ func GetLatestBlock(bc *Blockchain) Block {
 	return bc.Blocks[len(bc.Blocks)-1]	
 }
 
-func AddCertification(bc *Blockchain, cert Certificate) Block {
+func AddCertification(bc *Blockchain, cert Certificate) (Block, error) {
 	latest := GetLatestBlock(bc)
 
 	nb := NewBlock(latest, cert)
@@ -65,5 +65,7 @@ func AddCertification(bc *Blockchain, cert Certificate) Block {
 	if IsBlockValid(nb, latest) {
 		bc.Blocks = append(bc.Blocks, nb)
 	} 
-	return nb
+	return nb, nil
 }
+
+func IsValidChain(){}
