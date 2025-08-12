@@ -73,6 +73,19 @@ func submitHandler(w http.ResponseWriter, r *http.Request){
 		EventName: eventName, 
 		DateIssued: time.Now(),
 	}
+
+	newBlock, err := AddCertification(blockchainPtr, cert)
+	if err != nil {
+		http.Error(w, "internal server error, unable to add certificate", http.StatusInternalServerError)
+		return
+	}
+
+	if err := SaveBlockchain("blockchain.json", blockchainPtr); err != nil {
+		http.Error(w, "internal server error : unable to save blockchain", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html")
+	fmt.Fprintf(w, "<h1>Thank you, %s!</h1><p>Your attendance at '%s' has been recorded.</p>", attendeeName, eventName)
 }
 
 
