@@ -23,6 +23,7 @@ package main
 
 import (
 	"time"
+	"errors"
 )
 
 type Blockchain struct {
@@ -54,4 +55,16 @@ func NewBlockchain() (*Blockchain) {
 
 func GetLatestBlock(bc *Blockchain) Block {
 	return bc.Blocks[len(bc.Blocks)-1]	
+}
+
+func AddCertification(bc *Blockchain, cert Certificate) Block {
+	latest := GetLatestBlock(&bc)
+
+	nb := NewBlock(latest, cert)
+
+	if IsBlockValid(nb) {
+		bc.Blocks = append(bc.Blocks, nb)
+	} else {
+
+	}
 }
