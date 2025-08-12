@@ -6,6 +6,7 @@
 */ 
 
 /*
+GenesisBlock() -> function to fill out a genesis block
 NewBlockchain() -> creates an empty blockchain with a genesis block: returns a blockchain pointer
 AddCertification() -> appends a new block containing certificate data: returns the newly added block  
 IsValid() -> checks the chain integrity: returns true / false
@@ -23,6 +24,11 @@ import (
 	"time"
 )
 
+type Blockchain struct {
+	Blocks []Block
+	// will add concurrent access abilities later on
+}
+
 func CreateGenesisBlock() Block {
 	var emptyCert Certificate
 	var GenesisBlock Block
@@ -34,4 +40,8 @@ func CreateGenesisBlock() Block {
 	GenesisBlock.Hash = CalculateHash(GenesisBlock)
 
 	return GenesisBlock
+}
+
+func NewBlockchain() (*Blockchain, error) {
+
 }
