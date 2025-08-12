@@ -34,11 +34,26 @@ type Block struct {
 	Data Certificate // certification records
 	PrevHash string // hash of previous block
 	Hash string  / hash of current block 
-	Nonce int // for proof of work - not sure if this will be used
 }
 
+/* serialize the block */
+/* calculate SHA256 hash of the block and convert it to hexadecimal string */
 func CalculateHash(block Block) string {
-	/* calculate SHA256 hash of the block and convert it to hexadecimal string */
 	hash := sha256.Sum256(block)
 	hashString := hex.EncodeToString(hash[:])
+
+	return hashString
+}
+
+/* fill out newblock's info*/
+func NewBlock(previous Block, cert Certificate) Block {
+	var newBlock Block
+
+	newBlock.Index = previous.Index + 1
+	newBlock.Timestamp = time.Now()
+	newBlock.Data = cert 
+	newBlock.PrevHash = previous.Hash
+	newBlock.Hash = CalculateHash(newBlock)
+
+	return newBlock
 }
