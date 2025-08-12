@@ -48,7 +48,32 @@ func formHandler(w http.ResponseWriter, r *http.Request) string {
 	}
 }
 
-func submitHandler(w http.ResponseWriter, r *http.Request){}
+func submitHandler(w http.ResponseWriter, r *http.Request){
+	if r.method != http.MethodPost {
+		http.Error(w, "405 method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "bad request : unable to parse form", http.StatusBadRequest)
+		return
+	}
+
+	attendeeName := r.FormValue("name")
+	eventName := r.FormValue("event")
+
+	if attendeeName == "" || eventName = "" {
+		http.Error(w, "bad request : missing required fields", http.StatusBadRequest)
+		return
+	}
+
+	cert := Certificate{
+		MemberID: "",
+		Name: attendeeName,
+		EventName: eventName, 
+		DateIssued: time.Now(),
+	}
+}
 
 
 func main(){
