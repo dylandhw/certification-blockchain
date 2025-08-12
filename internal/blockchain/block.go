@@ -30,7 +30,7 @@ type Certificate struct {
 
 type Block struct {
 	Index int // block's position
-	Timestamp String // when block was created
+	Timestamp string // when block was created
 	Data Certificate // certification records
 	PrevHash string // hash of previous block
 	Hash string `json:"-"` // hash of current block 
