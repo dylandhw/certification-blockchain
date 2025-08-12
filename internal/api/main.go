@@ -21,13 +21,86 @@ Create routes for:
 	/qrcode/{id} -> returns a qr code png for the badge
 */
 
-package main 
+package main
 
 import (
-	"errors"
+    "fmt"
+    "html/template"
+    "net/http"
+    "time"
+    // other imports...
 )
 
-func main(){
-	bc, err := LoadBlockchain("blockchain.json")
-	if err != nil {panic(err)}
+var blockchainPtr *Blockchain  // package-level variable for access in handlers
+
+func formHandler(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodGet {
+        http.Error(w, "405 method not allowed", http.StatusMethodNotAllowed)
+        return
+    }
+    tmpl, err := template.ParseFiles("./web/form.html")
+    if err != nil {
+        http.Error(w, "unable to load form", http.StatusInternalServerError)
+        return
+    }
+    if err := tmpl.Execute(w, nil); err != nil {
+        http.Error(w, "unable to render form", http.StatusInternalServerError)
+        return
+    }
 }
+
+func submitHandler(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPost {
+        http.Error(w, "405 method not allowed", http.StatusMethodNotAllowed)
+        return
+    }
+    if err := r.ParseForm(); err != nil {
+        http.Error(w, "unable to parse form", http.StatusBadRequest)
+        return
+    }
+    attendeeName := r.FormValue("name")
+    eventName := r.FormValue("event")
+
+    if attendeeName == "" || eventName == "" {
+        http.Error(w, "missing required fields", http.StatusBadRequest)
+        return
+    }
+
+    cert := Certificate{
+        MemberID:  "", // generate or assign if needed
+        Name:      attendeeName,
+        EventName: eventName,
+        DateIssued: time.Now(),
+    }
+
+    newBlock, err := AddCertification(blockchainPtr, cert)
+    if err != nil {
+        http.Error(w, "unable to add certificate", http.StatusInternalServerError)
+        return
+    }
+
+    if err := SaveBlockChain("blockchain.json", blockchainPtr); err != nil {
+        http.Error(w, "unable to save blockchain", http.StatusInternalServerError)
+        return
+    }
+
+    w.Header().Set("Content-Type", "text/html")
+    fmt.Fprintf(w, "<h1>Thank you, %s!</h1><p>Your attendance at '%s' has been recorded.</p>", attendeeName, eventName)
+}
+
+func main() {
+    var err error
+    blockchainPtr, err = LoadBlockChain("blockchain.json")
+    if err != nil {
+        panic(err)
+    }
+
+    http.HandleFunc("/form", formHandler)
+    http.HandleFunc("/submit", submitHandler)
+
+    fmt.Println("Server starting at :8080")
+    if err := http.ListenAndServe(":8080", nil); err != nil {
+        panic(err)
+    }
+}
+
