@@ -15,9 +15,9 @@ package main
 
 import (
 	"encoding/json"
-	"os"
-	"errors"
+	_ "errors"
 	"fmt"
+	"os"
 )
 
 func SaveBlockchain(filename string, bc *Blockchain) error {
