@@ -7,7 +7,7 @@
                   sends data to blockchain.go to append to the blockchain 
 	CalculateHash() -> generates a SHA-256 hash of the block's data
                        sends data to NewBlock() and isBlockValid() in blockchain.go			\
-	isBlockValid() -> returns a boolean if block is valid in sequence and hash  
+	IsBlockValid() -> returns a boolean if block is valid in sequence and hash  
 					  sends data to blockchain.go for chain validation		
 */
 
@@ -56,10 +56,21 @@ func NewBlock(previous Block, cert Certificate) Block {
 	var newBlock Block
 
 	newBlock.Index = previous.Index + 1
-	newBlock.Timestamp = time.Now()
+	newBlock.Timestamp = time.Now().Format(time.RFC3339)
 	newBlock.Data = cert 
 	newBlock.PrevHash = previous.Hash
 	newBlock.Hash = CalculateHash(newBlock)
 
 	return newBlock
+}
+
+/* compares hashes, indexes, and links between the blocks */
+func IsBlockValid(newBlock, oldBlock Block) bool {
+	if oldBlock.Index + 1 != newBlock.Index {return false}
+	
+	if oldBlock.Hash != newBlock.PrevHash {return false}
+
+	if CalculateHash(newBlock) != newBlock.Hash {return false}
+
+	return true
 }
