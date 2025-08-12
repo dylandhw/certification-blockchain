@@ -20,9 +20,9 @@ import (
 	"fmt"
 )
 
-func SaveBlockChain(filename string, bc *Blockchain) error {
+func SaveBlockchain(filename string, bc *Blockchain) error {
 	// marshal bc to json
-	JSONbc, err := json.Marshal(bc)
+	JSONbc, err := json.MarshalIndent(bc, "", " ")
 	if err != nil {return err}
 
 	// write json bytes to the file
@@ -32,7 +32,7 @@ func SaveBlockChain(filename string, bc *Blockchain) error {
 	return nil // success 
 }
 
-func LoadBlockChain(filename string) (*Blockchain, error) {
+func LoadBlockchain(filename string) (*Blockchain, error) {
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -43,8 +43,9 @@ func LoadBlockChain(filename string) (*Blockchain, error) {
 
 	var bc Blockchain
 	if err := json.Unmarshal(data, &bc); err != nil {
+		fmt.Printf(">>> /storage.go : error reading or parsing json data") // internal debugging
 		return nil, err
 	}
-	fmt.Printf(">>> /storage.go : error reading or parsing json data") // internal debugging
+
 	return &bc, nil
 }
