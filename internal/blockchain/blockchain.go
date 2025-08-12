@@ -1,4 +1,5 @@
 /* Core blockchain logic
+	Genesis Block Creation (only once)
 	Block Creation
 	Verification 
 	Storage
@@ -15,3 +16,22 @@ Data Sending:
 	internal/storage: for saving blockchain state
 	internal/api: for responding to api calls
 */
+
+package main 
+
+import (
+	"time"
+)
+
+func CreateGenesisBlock() Block {
+	var emptyCert Certificate
+	var GenesisBlock Block
+
+	GenesisBlock.Index = 0
+	GenesisBlock.Timestamp = time.Now().Format(time.RFC3339)
+	GenesisBlock.Data = emptyCert
+	GenesisBlock.PrevHash = "0"
+	GenesisBlock.Hash = CalculateHash(GenesisBlock)
+
+	return GenesisBlock
+}
