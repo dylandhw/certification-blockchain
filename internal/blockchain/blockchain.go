@@ -25,7 +25,7 @@ import (
 )
 
 type Blockchain struct {
-	Blocks []Block
+	Blocks []Block // slice of block structs 
 	// will add concurrent access abilities later on
 }
 
@@ -43,5 +43,10 @@ func CreateGenesisBlock() Block {
 }
 
 func NewBlockchain() (*Blockchain, error) {
+	var Blockchain Blockchain
+	BlockchainPtr := &Blockchain
 
+	Genesis := CreateGenesisBlock()
+
+	return BlockchainPtr
 }
