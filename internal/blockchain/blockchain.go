@@ -68,4 +68,9 @@ func AddCertification(bc *Blockchain, cert Certificate) (Block, error) {
 	return nb, nil
 }
 
-func IsValidChain(){}
+func IsValidChain(bc *Blockchain) bool {
+	for i := 1; i < len(bc.Blocks); i++ {
+		if !IsBlockValid(bc.Blocks[i], bc.Blocks[i-1]) {return false}
+	}
+	return true
+}
