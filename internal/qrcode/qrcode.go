@@ -15,6 +15,7 @@ import (
 	"github.com/skip2/go-qrcode"
 )
 
-func GenerateQRCode(url string) ([]byte, error){}
-
-func SaveQRCodeToFile(url string, filename string) error {}
+func GenerateQRCode(url string) ( error){ 
+	err := qrcode.WriteFile(url, qrcode.Medium, 256, "qrcode.png")
+	return err 
+}
