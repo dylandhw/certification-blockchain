@@ -65,7 +65,7 @@ func AddCertification(bc *Blockchain, cert Certificate) (Block, error) {
 		bc.Blocks = append(bc.Blocks, nb)
 
 		// save after adding 
-		if err := SaveBlockchain(); err != nil {
+		if err := SaveBlockchain("blockchain.json", bc); err != nil {
 			return nb, err
 		}
 	} 
