@@ -35,6 +35,12 @@ func formHandler(w http.ResponseWriter, r *http.Request) string {
 		http.Error(w, "405 method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
+	tmpl, err := template.ParseFiles("./web/form.html")
+	if err != nil {
+		http.Error(w, " : unable to load form", http.StatusInternalServerError)
+		return
+	}
 }
 
 func submitHandler(w http.ResponseWriter, r *http.Request){}
