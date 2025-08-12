@@ -32,20 +32,4 @@ func SaveBlockChain(filename string, bc *Blockchain) error {
 	return nil // success 
 }
 
-func LoadBlockchain(filename string) (bc *Blockchain, error) {
-	bc_file, err := os.ReadFile(filename)
-	
-	// logic for file not found (blockchain doesn't exist)
-	if err != nil {return err}
-
-	_, err = os.Stat(filename)
-	if err != nil {
-		NewBC := NewBlockchain()
-		return NewBC
-	} else {
-		err := json.Unmarshal(filename, &bc_file)
-		return bc
-	} 
-	fmt.Printf(">> IN storage.go << : error reading or parsing data")
-	return err
-}
+func LoadBlockchain(filename string) (bc *Blockchain, error) {}
