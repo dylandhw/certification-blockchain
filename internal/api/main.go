@@ -41,6 +41,11 @@ func formHandler(w http.ResponseWriter, r *http.Request) string {
 		http.Error(w, " : unable to load form", http.StatusInternalServerError)
 		return
 	}
+
+	if err := tmpl.Execute(w, nil); err != nil {
+		http.Error(w, " : unable to render form", http.StatusInternalServerError)
+		return 
+	}
 }
 
 func submitHandler(w http.ResponseWriter, r *http.Request){}
