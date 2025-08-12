@@ -59,11 +59,15 @@ func GetLatestBlock(bc *Blockchain) Block {
 
 func AddCertification(bc *Blockchain, cert Certificate) (Block, error) {
 	latest := GetLatestBlock(bc)
-
 	nb := NewBlock(latest, cert)
 
 	if IsBlockValid(nb, latest) {
 		bc.Blocks = append(bc.Blocks, nb)
+
+		// save after adding 
+		if err := SaveBlockchain("blockchain.json", bc); err != nil {
+			return nb, err
+		}
 	} 
 	return nb, nil
 }
