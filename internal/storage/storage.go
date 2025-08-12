@@ -35,6 +35,9 @@ func LoadBlockchain(filename string, bc *Blockchain) (bc *Blockchain, error) {
 	bc_file, err := os.ReadFile(filename)
 	
 	// logic for file not found (blockchain doesn't exist)
+	if err != nil {return err}
+
+	_, err = os.Stat(filename)
 	if err != nil {
 		NewBC := NewBlockchain()
 		return NewBC
