@@ -16,8 +16,8 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
 )
 
@@ -33,13 +33,19 @@ type Block struct {
 	Timestamp time.Time // when block was created
 	Data Certificate // certification records
 	PrevHash string // hash of previous block
-	Hash string  / hash of current block 
+	Hash string  // hash of current block 
 }
 
 /* serialize the block */
 /* calculate SHA256 hash of the block and convert it to hexadecimal string */
 func CalculateHash(block Block) string {
-	hash := sha256.Sum256(block)
+	blockSerialized, err := json.Marshal(block)
+	if err != nil {
+		fmt.Printf("error serializing block: %v\n", err)
+		return ""
+	}
+
+	hash := sha256.Sum256(blockSerialized)
 	hashString := hex.EncodeToString(hash[:])
 
 	return hashString
