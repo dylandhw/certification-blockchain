@@ -38,7 +38,7 @@ func formHandler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "405 method not allowed", http.StatusMethodNotAllowed)
         return
     }
-    tmpl, err := template.ParseFiles("./web/form.html")
+    tmpl, err := template.ParseFiles("../web/form.html") 
     if err != nil {
         http.Error(w, "unable to load form", http.StatusInternalServerError)
         return
@@ -73,13 +73,13 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
         DateIssued: time.Now(),
     }
 
-    newBlock, err := AddCertification(blockchainPtr, cert)
+    _, err := AddCertification(blockchainPtr, cert)
     if err != nil {
         http.Error(w, "unable to add certificate", http.StatusInternalServerError)
         return
     }
 
-    if err := SaveBlockChain("blockchain.json", blockchainPtr); err != nil {
+    if err := SaveBlockchain("blockchain.json", blockchainPtr); err != nil {
         http.Error(w, "unable to save blockchain", http.StatusInternalServerError)
         return
     }
@@ -90,10 +90,19 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
     var err error
-    blockchainPtr, err = LoadBlockChain("blockchain.json")
+    blockchainPtr, err = LoadBlockchain("blockchain.json")
     if err != nil {
         panic(err)
     }
+
+    // Add root route handler that redirects to /form
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        if r.URL.Path == "/" {
+            http.Redirect(w, r, "/form", http.StatusSeeOther)
+        } else {
+            http.NotFound(w, r)
+        }
+    })
 
     http.HandleFunc("/form", formHandler)
     http.HandleFunc("/submit", submitHandler)
@@ -102,5 +111,6 @@ func main() {
     if err := http.ListenAndServe(":8080", nil); err != nil {
         panic(err)
     }
+    fmt.Printf("working")
 }
 
