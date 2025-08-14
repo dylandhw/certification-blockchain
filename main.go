@@ -20,9 +20,13 @@ import (
     "net/http"
     "time"
     "github.com/jackc/pgx/v5"
+    "context"
+    "log"
 )
 
-var blockchainPtr *Blockchain  // package-level variable for access in handlers
+// package level variables
+var blockchainPtr *Blockchain  
+var dbPool *pgx.Pool
 
 func formHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodGet {
