@@ -22,6 +22,9 @@ import (
     "github.com/jackc/pgx/v5"
     "context"
     "log"
+    "os"
+    "os/signal"
+    "syscall"
 )
 
 // package level variables
@@ -93,6 +96,17 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+    stop := make(chan os.Signal, 1)
+    signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+
+    go func() {
+        <-stop
+        fmt.Println("shutting down server...")
+        dbPool.Close()
+        os.Exit(0)
+    }()
+
     var err error
     blockchainPtr, err = LoadBlockchain("blockchain.json")
     if err != nil {
