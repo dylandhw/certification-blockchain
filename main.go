@@ -28,7 +28,14 @@ import (
 var blockchainPtr *Blockchain  
 var dbPool *pgx.Pool
 
-func ConnectDB(databaseURL string){}
+func ConnectDB(databaseURL string){
+    var err error 
+    dbPool, err = pgxpool.New(context.Background(), databaseURL)
+    if err != nil {
+        log.Fatalf("trouble connecting to database: %v\n", err)
+    }
+    fmt.Println("connected to postgresql database")
+}
 
 func formHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodGet {
