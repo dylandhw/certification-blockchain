@@ -12,15 +12,6 @@ sends data to:
 	internal/blockchain: to add approved certifications
 */
 
-
-/*TODO
-Create routes for:
-	/ -> serves form.html (for adding/searching/ badges)
-	/lookup -> serves lookup.html (for viewing a specific badge)
-	/submit -> post route to add a new badge to the blockchain
-	/qrcode/{id} -> returns a qr code png for the badge
-*/
-
 package main
 
 import (
@@ -28,17 +19,34 @@ import (
     "html/template"
     "net/http"
     "time"
-    // other imports...
+    "github.com/jackc/pgx/v5"
+    "context"
+    "log"
+    "os"
+    "os/signal"
+    "syscall"
+    "github.com/joho/godotenv"
 )
 
-var blockchainPtr *Blockchain  // package-level variable for access in handlers
+// package level variables
+var blockchainPtr *Blockchain  
+var dbPool *pgx.Pool
+
+func ConnectDB(databaseURL string){
+    var err error 
+    dbPool, err = pgxpool.New(context.Background(), databaseURL)
+    if err != nil {
+        log.Fatalf("trouble connecting to database: %v\n", err)
+    }
+    fmt.Println("connected to postgresql database")
+}
 
 func formHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodGet {
         http.Error(w, "405 method not allowed", http.StatusMethodNotAllowed)
         return
     }
-    tmpl, err := template.ParseFiles("./web/form.html")
+    tmpl, err := template.ParseFiles("../web/form.html") 
     if err != nil {
         http.Error(w, "unable to load form", http.StatusInternalServerError)
         return
@@ -73,13 +81,13 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
         DateIssued: time.Now(),
     }
 
-    newBlock, err := AddCertification(blockchainPtr, cert)
+    _, err := AddCertification(blockchainPtr, cert)
     if err != nil {
         http.Error(w, "unable to add certificate", http.StatusInternalServerError)
         return
     }
 
-    if err := SaveBlockChain("blockchain.json", blockchainPtr); err != nil {
+    if err := SaveBlockchain("blockchain.json", blockchainPtr); err != nil {
         http.Error(w, "unable to save blockchain", http.StatusInternalServerError)
         return
     }
@@ -89,11 +97,39 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+    // load env files
+    if err := godotenv.Load() != nil {
+        log.Fatalf("could not locate .env file")
+    }
+    databaseURL := os.GetEnv("DATABASE_URL")
+    if databaseURL == "" {
+        log.Fatalf("DATABASE_URL not set")
+    }
+
+    stop := make(chan os.Signal, 1)
+    signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+
+    go func() {
+        <-stop
+        fmt.Println("shutting down server...")
+        dbPool.Close()
+        os.Exit(0)
+    }()
+
     var err error
-    blockchainPtr, err = LoadBlockChain("blockchain.json")
+    blockchainPtr, err = LoadBlockchain("blockchain.json")
     if err != nil {
         panic(err)
     }
+
+    // Add root route handler that redirects to /form
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        if r.URL.Path == "/" {
+            http.Redirect(w, r, "/form", http.StatusSeeOther)
+        } else {
+            http.NotFound(w, r)
+        }
+    })
 
     http.HandleFunc("/form", formHandler)
     http.HandleFunc("/submit", submitHandler)
@@ -102,5 +138,5 @@ func main() {
     if err := http.ListenAndServe(":8080", nil); err != nil {
         panic(err)
     }
+    fmt.Printf("working")
 }
-

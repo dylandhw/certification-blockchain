@@ -1,0 +1,70 @@
+Refactoring Plan Overview
+Phase 1: Database Setup & Dependencies
+Add PostgreSQL Dependencies
+Add lib/pq or pgx driver to go.mod
+Add database connection management package
+Database Schema Design
+Create blocks table for blockchain data
+Create certificates table for certificate details
+Design proper indexes for performance
+Phase 2: Core Storage Layer Refactoring
+Replace storage.go
+Convert from file I/O to database operations
+Implement connection management
+Add transaction support for blockchain operations
+Update blockchain.go
+Modify AddCertification to use database transactions
+Update blockchain loading to query database
+Ensure atomic operations for concurrent writes
+Modify block.go
+Update data types if needed for database compatibility
+Ensure proper serialization/deserialization
+Phase 3: Application Layer Updates
+Update main.go
+Initialize database connection instead of loading JSON file
+Remove file-based blockchain loading
+Add database connection cleanup
+Error Handling Updates
+Replace file system errors with database-specific error handling
+Add connection retry logic
+Handle transaction failures gracefully
+Phase 4: Data Migration
+Migration Script
+Read existing blockchain.json
+Insert data into PostgreSQL tables
+Verify data integrity
+Testing & Validation
+Ensure blockchain integrity is maintained
+Test concurrent write scenarios
+Validate all existing functionality
+Key Architectural Changes Required
+1. Database Connection Management
+Replace file path parameters with database connection strings
+Implement connection pooling for concurrent access
+Add connection health checks
+2. Transaction-Based Operations
+Wrap block additions in database transactions
+Ensure blockchain integrity during concurrent writes
+Implement proper rollback mechanisms
+3. Data Persistence Strategy
+Replace SaveBlockchain() with database commit operations
+Update LoadBlockchain() to query database tables
+Remove dependency on blockchain.json file
+4. Concurrent Access Preparation
+Design database schema to handle multiple writers
+Implement proper locking strategies
+Add conflict resolution for simultaneous block additions
+Implementation Order
+Start with database setup - Get PostgreSQL running and create schema
+Create new storage layer - Build database operations alongside existing file operations
+Update blockchain logic - Modify core functions to use database transactions
+Update main application - Change initialization and error handling
+Test thoroughly - Ensure all functionality works with new storage
+Remove old code - Clean up file-based storage after successful migration
+Add concurrent features - Implement the concurrent write capabilities you planned
+Critical Considerations
+Data Integrity: Ensure blockchain hash chain remains valid during migration
+Rollback Plan: Keep old JSON storage as backup until migration is proven
+Performance: Add proper database indexes for blockchain queries
+Monitoring: Add database connection monitoring and error logging
+Configuration: Make database connection details configurable (not hardcoded)

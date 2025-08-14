@@ -23,7 +23,6 @@ package main
 
 import (
 	"time"
-	"errors"
 )
 
 type Blockchain struct {
