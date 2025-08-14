@@ -25,6 +25,7 @@ import (
     "os"
     "os/signal"
     "syscall"
+    "github.com/joho/godotenv"
 )
 
 // package level variables
@@ -96,6 +97,14 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+    // load env files
+    if err := godotenv.Load() != nil {
+        log.Fatalf("could not locate .env file")
+    }
+    databaseURL := os.GetEnv("DATABASE_URL")
+    if databaseURL == "" {
+        log.Fatalf("DATABASE_URL not set")
+    }
 
     stop := make(chan os.Signal, 1)
     signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
