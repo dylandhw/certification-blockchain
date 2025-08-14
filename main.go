@@ -12,15 +12,6 @@ sends data to:
 	internal/blockchain: to add approved certifications
 */
 
-
-/*TODO
-Create routes for:
-	/ -> serves form.html (for adding/searching/ badges)
-	/lookup -> serves lookup.html (for viewing a specific badge)
-	/submit -> post route to add a new badge to the blockchain
-	/qrcode/{id} -> returns a qr code png for the badge
-*/
-
 package main
 
 import (
@@ -28,7 +19,7 @@ import (
     "html/template"
     "net/http"
     "time"
-    // other imports...
+    "github.com/jackc/pgx/v5"
 )
 
 var blockchainPtr *Blockchain  // package-level variable for access in handlers
