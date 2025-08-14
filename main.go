@@ -28,6 +28,8 @@ import (
 var blockchainPtr *Blockchain  
 var dbPool *pgx.Pool
 
+func ConnectDB(databaseURL string){}
+
 func formHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodGet {
         http.Error(w, "405 method not allowed", http.StatusMethodNotAllowed)
