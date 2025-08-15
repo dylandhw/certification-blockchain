@@ -19,7 +19,7 @@ import (
     "html/template"
     "net/http"
     "time"
-    "github.com/jackc/pgx/v5"
+    "github.com/jackc/pgx/v5/pgxpool"
     "context"
     "log"
     "os"
@@ -30,7 +30,7 @@ import (
 
 // package level variables
 var blockchainPtr *Blockchain  
-var dbPool *pgx.Pool
+var dbPool *pgxpool.Pool
 
 func ConnectDB(databaseURL string){
     var err error 
@@ -98,10 +98,10 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
     // load env files
-    if err := godotenv.Load() != nil {
+    if err := godotenv.Load(); err != nil {
         log.Fatalf("could not locate .env file")
     }
-    databaseURL := os.GetEnv("DATABASE_URL")
+    databaseURL := os.Getenv("DATABASE_URL")
     if databaseURL == "" {
         log.Fatalf("DATABASE_URL not set")
     }
